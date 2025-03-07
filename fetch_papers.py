@@ -63,11 +63,25 @@ def extract_corresponding_author_email(paper: Dict[str, Any]) -> str:
     return email_match.group(0) if email_match else "N/A"
 
 def save_to_csv(papers: List[Dict[str, Any]], filename: str) -> None:
-    """Saves paper data to a CSV file."""
+    """Saves paper data to a CSV file, ensuring proper formatting for list fields."""
+    headers = ["PubmedID", "Title", "Publication Date", "Non-academic Author(s)", "Company Affiliation(s)", "Corresponding Author Email"]
+
     with open(filename, mode="w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=papers[0].keys())
+        writer = csv.DictWriter(file, fieldnames=headers)
         writer.writeheader()
-        writer.writerows(papers)
+        
+        for paper in papers:
+            writer.writerow({
+                "PubmedID": paper["PubmedID"],
+                "Title": paper["Title"],
+                "Publication Date": paper["Publication Date"],
+                "Non-academic Author(s)": ", ".join(paper["Non-academic Author(s)"]) if isinstance(paper["Non-academic Author(s)"], list) else paper["Non-academic Author(s)"],
+                "Company Affiliation(s)": ", ".join(paper["Company Affiliation(s)"]) if isinstance(paper["Company Affiliation(s)"], list) else paper["Company Affiliation(s)"],
+                "Corresponding Author Email": paper["Corresponding Author Email"]
+            })
+
+    print(f"✅ Results saved to {filename}")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Fetch research papers from PubMed.")
