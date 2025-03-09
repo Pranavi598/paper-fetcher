@@ -1,0 +1,2 @@
+usage: fetch_papers.py [-h] [-f FILE] [-d] [query]
+fetch_papers.py: error: unrecognized arguments: '
